@@ -5,8 +5,12 @@ import numpy as np
 from shapely.geometry import Polygon, box
 import plotly.express as px
 import geopandas
+import datetime
+from dateutil import tz
+from_zone = tz.gettz('UTC')
+to_zone = tz.gettz('America/New_York')
 
-token = open("mapbox_token.txt").read()
+token = open("./env/mapbox_token.txt").read()
 
 # %%
 data=pd.read_csv('uber.csv',index_col=0)[['pickup_datetime','pickup_longitude','dropoff_longitude','pickup_latitude','dropoff_latitude','passenger_count']]
@@ -25,6 +29,14 @@ for long in longs:
     data=data[(data[long]>long_range_start)&(data[long]<long_range_end)]
 for lat in lats:
     data=data[(data[lat]>lat_range_start)&(data[lat]<lat_range_end)]
+#%%
+data['pickup_datetime']=data['pickup_datetime'].apply(lambda x:datetime.datetime.strptime(x,'%Y-%m-%d %H:%M:%S UTC'))
+
+data['pickup_datetime_local']=data['pickup_datetime'].apply(lambda x:x.replace(tzinfo=from_zone).astimezone(to_zone))
+#%%
+data['hour']=data['pickup_datetime_local'].apply(lambda x:x.hour)
+data['year']=data['pickup_datetime_local'].apply(lambda x:x.year)
+data.drop(['pickup_datetime'],axis=1,inplace=True)
 
 # %%
 min_lat=min(data['pickup_latitude'].min(),data['dropoff_latitude'].min())
@@ -55,7 +67,7 @@ for i in np.arange(len(lat_list)-1):
 #%%
 count_by_quad_pick=data.groupby('quad_pickup').count()
 count_by_quad_drop=data.groupby('quad_drop').count()
-indexes_selected=set.union(set(list(count_by_quad_pick[count_by_quad_pick['pickup_datetime']>=1].index)),set(list(count_by_quad_drop[count_by_quad_drop['pickup_datetime']>=1].index)))
+indexes_selected=set.union(set(list(count_by_quad_pick[count_by_quad_pick['pickup_longitude']>=1].index)),set(list(count_by_quad_drop[count_by_quad_drop['pickup_longitude']>=1].index)))
 
 
 # %%

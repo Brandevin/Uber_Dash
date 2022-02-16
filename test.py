@@ -9,7 +9,7 @@ import matplotlib.pylab as pylab
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
-quad_properties_df=pd.read_csv('quad_properties.csv',index_col=0)[['quad_id','geometry']]
+quad_properties_df=pd.read_csv('quad_properties.csv',index_col=0)
 # %%
 
 cmap = pylab.cm.viridis
@@ -120,4 +120,106 @@ fig.update_layout(
     annotations=[dict(text='Pick Up', x=0.5, y=0.18, font_size=12, showarrow=False),
                  dict(text='Drop Off', x=0.5, y=0.82, font_size=12, showarrow=False)])
 fig.show()
+# %%
+
+#most common origins
+
+data_grouped=data_dropoff_quad.groupby('quad_pickup').count()[['pickup_longitude']].reset_index().rename(columns={'quad_pickup':'quad_id','pickup_longitude':'count'})
+
+dff=data_grouped.merge(quad_properties_df,on='quad_id')
+dff['geometry']=gp.GeoSeries.from_wkt(dff['geometry'])
+
+gdf = gp.GeoDataFrame(dff, crs="EPSG:4326",geometry=dff.geometry)
+
+
+percentiles=list(map(lambda x:round(x,0),list(gdf['count'].quantile([0,.1,.2,.3,.4,.5,.6,.7,.8,.9,1]))))
+percentiles[0]=percentiles[0]-100
+percentiles[-1]=percentiles[-1]+100
+percentiles = list( dict.fromkeys(percentiles) )
+divisions=len(percentiles)
+cmaplist = [matplotlib.colors.rgb2hex(cmap(i/divisions)) for i in range(divisions)]
+
+labels=[f'<{percentiles[1]:.0f}']
+for i in np.arange(len(percentiles)-1):
+    if i<=1:continue
+    labels+=[f'{percentiles[i-1]:.0f}-{percentiles[i]:.0f}']
+labels+=[f'>{percentiles[-2]:.0f}']
+
+gdf['count_bins']=pd.cut(gdf['count'],bins=percentiles,labels=labels)
+
+hover_columns=['count']
+#drop_duplicates
+
+quad_data=quad_properties_df[quad_properties_df['quad_id']==quad_selected]
+
+lat_center=quad_data.iloc[0][['lat','lat2']].mean()
+lon_center=quad_data.iloc[0][['lon','lon2']].mean()
+
+hover_columns=list(dict.fromkeys(hover_columns))
+fig=px.choropleth_mapbox(gdf, geojson=gdf.geometry, 
+                            locations=gdf.index, color='count_bins',category_orders ={'count_bins':labels},height=600, mapbox_style="carto-positron", hover_data=hover_columns,color_discrete_sequence=cmaplist
+    ,opacity=0.5,zoom=12,center={'lon':lon_center,'lat':lat_center})
+fig.add_trace(go.Choroplethmapbox(z=quad_data.quad_id,geojson=quad_data.geometry,marker_line_color='white', locations=quad_data.index, marker_line_width=1))
+fig.update_layout(mapbox_style="light",margin={"r":0,"t":0,"l":0,"b":0},
+    mapbox_accesstoken=token,
+    plot_bgcolor=colors['background'],
+    paper_bgcolor=colors['background'],
+    font_color=colors['text'],
+    font=dict(size=8),legend=dict(
+    yanchor="top",
+    y=0.99,
+    xanchor="left",
+    x=0.01
+))
+# %%
+
+#########################
+#most common destinations
+data_grouped=data_pickup_quad.groupby('quad_drop').count()[['pickup_longitude']].reset_index().rename(columns={'quad_drop':'quad_id','pickup_longitude':'count'})
+
+dff=data_grouped.merge(quad_properties_df,on='quad_id')
+dff['geometry']=gp.GeoSeries.from_wkt(dff['geometry'])
+
+gdf = gp.GeoDataFrame(dff, crs="EPSG:4326",geometry=dff.geometry)
+
+
+percentiles=list(map(lambda x:round(x,0),list(gdf['count'].quantile([0,.1,.2,.3,.4,.5,.6,.7,.8,.9,1]))))
+percentiles[0]=percentiles[0]-100
+percentiles[-1]=percentiles[-1]+100
+percentiles = list( dict.fromkeys(percentiles) )
+divisions=len(percentiles)
+cmaplist = [matplotlib.colors.rgb2hex(cmap(i/divisions)) for i in range(divisions)]
+
+labels=[f'<{percentiles[1]:.0f}']
+for i in np.arange(len(percentiles)-1):
+    if i<=1:continue
+    labels+=[f'{percentiles[i-1]:.0f}-{percentiles[i]:.0f}']
+labels+=[f'>{percentiles[-2]:.0f}']
+
+gdf['count_bins']=pd.cut(gdf['count'],bins=percentiles,labels=labels)
+
+hover_columns=['count']
+#drop_duplicates
+
+quad_data=quad_properties_df[quad_properties_df['quad_id']==quad_selected]
+
+lat_center=quad_data.iloc[0][['lat','lat2']].mean()
+lon_center=quad_data.iloc[0][['lon','lon2']].mean()
+
+hover_columns=list(dict.fromkeys(hover_columns))
+fig=px.choropleth_mapbox(gdf, geojson=gdf.geometry, 
+                            locations=gdf.index, color='count_bins',category_orders ={'count_bins':labels},height=600, mapbox_style="carto-positron", hover_data=hover_columns,color_discrete_sequence=cmaplist
+    ,opacity=0.5,zoom=12,center={'lon':lon_center,'lat':lat_center})
+fig.add_trace(go.Choroplethmapbox(z=quad_data.quad_id,geojson=quad_data.geometry,marker_line_color='white', locations=quad_data.index, marker_line_width=1))
+fig.update_layout(mapbox_style="light",margin={"r":0,"t":0,"l":0,"b":0},
+    mapbox_accesstoken=token,
+    plot_bgcolor=colors['background'],
+    paper_bgcolor=colors['background'],
+    font_color=colors['text'],
+    font=dict(size=8),legend=dict(
+    yanchor="top",
+    y=0.99,
+    xanchor="left",
+    x=0.01
+))
 # %%

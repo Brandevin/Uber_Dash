@@ -44,7 +44,7 @@ Flask-Compress==1.10.1
 flit_core
 folium==0.12.1.post1
 fonttools
-GDAL==3.4.0
+GDAL
 geobr==0.1.10
 geobuf==1.1.1
 geopandas==0.10.2

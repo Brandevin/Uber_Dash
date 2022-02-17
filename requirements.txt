@@ -1,6 +1,5 @@
 adjustText==0.7.3
 affine==2.3.0
-anyio
 argon2-cffi
 argon2-cffi-bindings
 asttokens
@@ -122,8 +121,6 @@ rasterio==1.2.10
 requests
 Rtree
 scikit-learn
-scipy
-seaborn==0.11.2
 Send2Trash
 Shapely==1.8.0
 six

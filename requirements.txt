@@ -110,7 +110,7 @@ pyrsistent
 PySocks
 python-dateutil
 pytz
-pypiwin32
+pywin32
 pywinpty
 PyYAML==6.0
 pyzmq

@@ -110,7 +110,7 @@ main_map=html.Div([html.Div(style={'backgroundColor': colors['background'], 'dis
             'color': colors['text']}),
 
     dcc.Graph(id='choropleth', figure = blank_figure(),style={'margin':'30px'})
-    ],style={'padding':10,'flex-basis':'55%','text-align':'center'})
+    ],style={'padding':10,'flex-basis':'50%','text-align':'center'})
 
 histogram=dcc.Graph(id='histograms', figure = blank_figure(),style={'padding':0,'flex-basis':'33%','text-align':'center'})
 line_plot=dcc.Graph(id='line_plots', figure = blank_figure(),style={'padding':0,'flex-basis':'33%','text-align':'center'})

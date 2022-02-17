@@ -1,7 +1,5 @@
 adjustText==0.7.3
 affine==2.3.0
-argon2-cffi
-argon2-cffi-bindings
 asttokens
 attrs
 Babel

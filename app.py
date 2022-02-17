@@ -42,6 +42,7 @@ def blank_figure():
 
 app = Dash(__name__)
 app.title = 'New York Uber rides Dash'
+server = app.server
 
 
 # App layout

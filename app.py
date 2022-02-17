@@ -112,9 +112,9 @@ main_map=html.Div([html.Div(style={'backgroundColor': colors['background'], 'dis
     dcc.Graph(id='choropleth', figure = blank_figure(),style={'margin':'30px'})
     ],style={'padding':10,'flex-basis':'50%','text-align':'center'})
 
-histogram=dcc.Graph(id='histograms', figure = blank_figure(),style={'padding':0,'flex-basis':'33%','text-align':'center'})
-line_plot=dcc.Graph(id='line_plots', figure = blank_figure(),style={'padding':0,'flex-basis':'33%','text-align':'center'})
-pie_plot=dcc.Graph(id='pie_plots', figure = blank_figure(),style={'padding':0,'flex-basis':'33%','text-align':'center'})
+histogram=dcc.Graph(id='histograms', figure = blank_figure(),style={'padding':0,'flex-basis':'100%','text-align':'center'})
+line_plot=dcc.Graph(id='line_plots', figure = blank_figure(),style={'padding':0,'flex-basis':'30%','text-align':'center'})
+pie_plot=dcc.Graph(id='pie_plots', figure = blank_figure(),style={'padding':0,'flex-basis':'65%','text-align':'center'})
 
 map_destinations=dcc.Graph(id='map_destinations', figure = blank_figure(),style={'padding':10,'text-align':'center','flex-basis':'33%'})
 map_origins=dcc.Graph(id='map_origins', figure = blank_figure(),style={'padding':10,'text-align':'center','flex-basis':'33%'})
@@ -147,10 +147,10 @@ title_maps=html.H2("", style={'text-align': 'center',
 
 subplots=html.Div([title_quad,histogram,html.Div(style={'backgroundColor': colors['background'], 'display': 'flex', 'flex-direction': 'row'},
     children=[line_plot,pie_plot])
-    ],style={'padding':0,'text-align':'center','flex-basis':'30%'})
+    ],style={'padding':0,'text-align':'center','flex-basis':'30%','diplay':'flex','flex-direction':'column'})
 
 first_section=html.Div([main_map,v_division,subplots],style={'backgroundColor': colors['background'], 'display': 'flex', 'flex-direction': 'row'})
-app.layout=html.Div([main_title,first_section,h_division,title_maps,maps],style={'backgroundColor': colors['background']})
+app.layout=html.Div([main_title,first_section,h_division,title_maps,maps],style={'backgroundColor': colors['background'],'display':'flex','flex-direction':'column'})
 
 def plot_choropleth(dff,var,slct_var_label,hover_columns):
     dff['quad_id']=dff['quad_id'].astype(int)
@@ -298,7 +298,7 @@ def plot_overall_data(clickData):
 
     data_melt=pd.melt(count_by_hour,value_vars=['dropoff','pickup'],id_vars='hour').rename(columns={'value':'Total trips','variable':'type'})
 
-    fig_hist=px.bar(data_melt,x='hour',y='Total trips',facet_row='type',color='type',title='Trips by hour on quad',width=900, text_auto=True)
+    fig_hist=px.bar(data_melt,x='hour',y='Total trips',facet_row='type',color='type',title='Trips by hour on quad', text_auto=True)
 
 
     fig_hist.update_layout(
@@ -384,6 +384,7 @@ def plot_overall_data(clickData):
         paper_bgcolor=colors['background'],
         font_color=colors['text'],
         legend=dict(
+            bgcolor='rgba(0,0,0,0)',
         xanchor="left",
         x=-0.5,
         title='Passengers',

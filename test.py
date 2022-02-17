@@ -284,7 +284,7 @@ fig.update_layout(
             lon=lon_center
         ),
         pitch=0,
-        zoom=15
+        zoom=16
     ),height=600,margin={"r":0,"t":0,"l":0,"b":0},
     legend=dict(
         yanchor="top",

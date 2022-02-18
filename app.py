@@ -19,7 +19,7 @@ color_labels={0:'blue',1:'green',2:'red',3:'cyan',4:'magenta',5:'darkorange',6:'
 
 
 #token = open("./env/mapbox_token.txt").read()
-token='pk.eyJ1IjoiYnJhbmRldmluIiwiYSI6ImNremRjb20zeDJ0anYydnA0aWQ0Z2Z5ZHgifQ.f1NRhzEn7YOvrTaRZAOC-g'
+
 token=os.environ['token']
 colors = {
     'background': '#111111',
